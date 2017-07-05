@@ -83,4 +83,4 @@ if __name__ == "__main__":
     if mkl_present:
         print("MKL could be found")
     else:
-        print("MKL could be found")
+        print("MKL could NOT be found")
