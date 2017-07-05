@@ -27,8 +27,11 @@ import os
 
 def mkl_exists(verbose=False):
 
+    # Get environment variables
     __MKLROOT__ = os.environ.get('MKLROOT')
     __LD_LIBRARY_PATH__ = os.environ.get('LD_LIBRARY_PATH')
+
+    # Check if $MKLROOT is set
 
     if __MKLROOT__ is None:
 
@@ -36,16 +39,25 @@ def mkl_exists(verbose=False):
             print("MKL-discover: MKLROOT was not set")
 
         return False
+
     else:
 
         if verbose: 
-            print("MKL-discover: MKLROOT was discovered at")
+            print("MKL-discover: MKLROOT was set to")
             print(__MKLROOT__)
 
+    # Check if path exists
     mklroot_exists = os.path.isdir(__MKLROOT__)
+    
+    if not mklroot_exists:
+        if verbose: 
+            print("MKL-discover: MKLROOT path does not exist")
+
+        return False
 
     found_libmkl_rt = False
 
+    # Check if libmkl_rt.so exists below $MKLROOT
     for dirpath, dirnames, filenames in os.walk(__MKLROOT__, followlinks=True):
 
         if "libmkl_rt.so" in filenames:
@@ -53,6 +65,7 @@ def mkl_exists(verbose=False):
             if verbose:
                 print("MKL-discover: Found libmkl_rt.so at ", dirpath)
 
+            # Check that the dirpath where libmkl_rt.so is in $LD_LIBRARY_PATH
             if dirpath in __LD_LIBRARY_PATH__:
 
                 if verbose:
